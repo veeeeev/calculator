@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<title>title</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+	<script>
+	$(function() {
+		var country_minute_pricing = {
+			"VoIP:FREE":0.00,
+			"US Toll:FREE":0.00,
+			"Algeria":0.01,
+			"Argentina":0.03,
+			"Australia":0.02,
+			"Austria":0.02,
+			"Bahrain":0.02,
+			"Belgium":0.02,
+			"Brazil":0.02,
+			"Bulgaria":0.02,
+			"Canada":0.02,
+			"China-Beijing":0.01,
+			"China-Guangzhou":0.01,
+			"Costa Rica":0.01,
+			"Croatia":0.01,
+			"Cyprus":0.02,
+			"Czech Republic":0.02,
+			"Denmark":0.02,
+			"Dominican Republic":0.02,
+			"El Salvador":0.02,
+			"Estonia":0.02,
+			"Finland":0.02,
+			"France":0.02,
+			"Germany":0.02,
+			"Greece":0.02,
+			"Hong Kong":0.02,
+			"Hungary":0.01,
+			"India-Bangalore":0.05,
+			"India-Mumbai":0.05,
+			"Indonesia":0.02,
+			"Ireland":0.02,
+			"Israel":0.02,
+			"Italy":0.02,
+			"Japan":0.02,
+			"Korea, Republic of":0.01,
+			"Latvia":0.02,
+			"Liechtenstein":0.01,
+			"Lithuania":0.02,
+			"Luxembourg":0.02,
+			"Malaysia":0.03,
+			"Malta":0.02,
+			"Mexica-Guadalajara":0.02,
+			"Mexico-Mexico City":0.02,
+			"Netherlands":0.02,
+			"New Zealand":0.02,
+			"Norway":0.01,
+			"Peru":0.02,
+			"Philippines":0.25,
+			"Poland":0.02,
+			"Portugal":0.02,
+			"Puerto Rico":0.02,
+			"Romania":0.02,
+			"Russia-Moscow":0.07,
+			"Singapore":0.02,
+			"Slovakia":0.02,
+			"Slovenia":0.01,
+			"South Africa":0.02,
+			"Spain":0.02,
+			"Sweden":0.02,
+			"Switzerland":0.02,
+			"Taiwan":0.01,
+			"United Kingdom":0.02
+		};
+
+		var $plan    = $("#plan_select");
+		var $users   = $("#number_users");
+		var $country = $("#country_select");
+
+		var $minute_boxes 	   = $(".minute-box");
+		var $minute_inputs 	   = $(".minute-box input");
+		var $minute_box_hiders = $(".hide-minute-box");
+
+		var $users_error = $("#users_error");
+
+		var $output = $("#output");
+
+		$("#calculator").submit(function(event) { event.preventDefault() });
+
+		function addCountryInput(event) {
+			$(".minute-box[data-country='" + $country.val() + "']").show();
+		}
+
+		function hideCountryInput(event) {
+			$(event.target).parent().hide();
+		}
+
+		function formValidate() {
+			var num_users = parseInt($users.val());
+
+			var users_valid = !isNaN(num_users) && num_users >= 0;
+			users_valid ? $users_error.hide() : $users_error.show();
+
+			return users_valid;
+		}
+
+		function recalculate() {
+			if(formValidate()) {
+				var base_cost = $plan.val() * $users.val();
+
+				var country_costs = $minute_inputs.map(function() {
+					return this.value * this.dataset.price;
+				}).get()
+
+				var dialin_cost = 0;
+				for(var i=0; i < country_costs.length; i++) {
+					if(!isNaN(parseInt(country_costs[i])))
+						dialin_cost += country_costs[i];
+				}
+
+				var total_cost = base_cost + dialin_cost;
+
+				$output.text(total_cost);
+			} else {
+				$output.text("");
+			}
+		}
+
+		$plan.change(recalculate);
+		$country.change(addCountryInput);
+		$users.on("input", recalculate);
+		$minute_inputs.on("input", recalculate);
+		$minute_box_hiders.click(hideCountryInput);
+
+		$minute_boxes.hide();
+	});
+</script>
+</head>
+<body>
+	<form id="calculator">
+		<label>
+			Plan Type: 
+			<select name="plan" id="plan_select">
+				<option value="10.00" selected>Biba Subscription</option> 
+				<option value="15.00">Biba Monthly</option>
+			</select>
+		</label>
+		<br>
+		<label>
+			Number of Users:
+			<input type="number" id="number_users" value="0" />
+			<span id="users_error">
+				Enter a number greater than 0.
+			</span>
+		</label>
+		<br>
+		<label>
+			Countries for Dial-In:
+			<select name="country" id="country_select">
+				<option>---</option>
+				<option value="VoIP:FREE">VoIP:FREE</option>
+				<option value="US Toll:FREE">US Toll:FREE</option>
+				<option value="Algeria">Algeria</option>
+				<option value="Argentina">Argentina</option>
+				<option value="Australia">Australia</option>
+				<option value="Austria">Austria</option>
+				<option value="Bahrain">Bahrain</option>
+				<option value="Belgium">Belgium</option>
+				<option value="Brazil">Brazil</option>
+				<option value="Bulgaria">Bulgaria</option>
+				<option value="Canada">Canada</option>
+				<option value="China-Beijing">China-Beijing</option>
+				<option value="China-Guangzhou">China-Guangzhou</option>
+				<option value="Costa Rica">Costa Rica</option>
+				<option value="Croatia">Croatia</option>
+				<option value="Cyprus">Cyprus</option>
+				<option value="Czech Republic">Czech Republic</option>
+				<option value="Denmark">Denmark</option>
+				<option value="Dominican Republic">Dominican Republic</option>
+				<option value="El Salvador">El Salvador</option>
+				<option value="Estonia">Estonia</option>
+				<option value="Finland">Finland</option>
+				<option value="France">France</option>
+				<option value="Germany">Germany</option>
+				<option value="Greece">Greece</option>
+				<option value="Hong Kong">Hong Kong</option>
+				<option value="Hungary">Hungary</option>
+				<option value="India-Bangalore">India-Bangalore</option>
+				<option value="India-Mumbai">India-Mumbai</option>
+				<option value="Indonesia">Indonesia</option>
+				<option value="Ireland">Ireland</option>
+				<option value="Israel">Israel</option>
+				<option value="Italy">Italy</option>
+				<option value="Japan">Japan</option>
+				<option value="Korea, Republic of">Korea, Republic of</option>
+				<option value="Latvia">Latvia</option>
+				<option value="Liechtenstein">Liechtenstein</option>
+				<option value="Lithuania">Lithuania</option>
+				<option value="Luxembourg">Luxembourg</option>
+				<option value="Malaysia">Malaysia</option>
+				<option value="Malta">Malta</option>
+				<option value="Mexica-Guadalajara">Mexica-Guadalajara</option>
+				<option value="Mexico-Mexico City">Mexico-Mexico City</option>
+				<option value="Netherlands">Netherlands</option>
+				<option value="New Zealand">New Zealand</option>
+				<option value="Norway">Norway</option>
+				<option value="Peru">Peru</option>
+				<option value="Philippines">Philippines</option>
+				<option value="Poland">Poland</option>
+				<option value="Portugal">Portugal</option>
+				<option value="Puerto Rico">Puerto Rico</option>
+				<option value="Romania">Romania</option>
+				<option value="Russia-Moscow">Russia-Moscow</option>
+				<option value="Singapore">Singapore</option>
+				<option value="Slovakia">Slovakia</option>
+				<option value="Slovenia">Slovenia</option>
+				<option value="South Africa">South Africa</option>
+				<option value="Spain">Spain</option>
+				<option value="Sweden">Sweden</option>
+				<option value="Switzerland">Switzerland</option>
+				<option value="Taiwan">Taiwan</option>
+				<option value="United Kingdom">United Kingdom</option>
+				<option value="United States Toll-Free">United States Toll-Free</option>
+			</select>
+		</label>
+		<div class="minute-box" data-country="VoIP:FREE">
+			<label>
+				VoIP:FREE:
+				<input type="number" data-price="0.00" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="US Toll:FREE">
+			<label>
+				US Toll:FREE:
+				<input type="number" data-price="0.00" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Algeria">
+			<label>
+				Algeria:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Argentina">
+			<label>
+				Argentina:
+				<input type="number" data-price="0.03" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Australia">
+			<label>
+				Australia:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Austria">
+			<label>
+				Austria:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Bahrain">
+			<label>
+				Bahrain:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Belgium">
+			<label>
+				Belgium:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Brazil">
+			<label>
+				Brazil:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Bulgaria">
+			<label>
+				Bulgaria:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Canada">
+			<label>
+				Canada:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="China-Beijing">
+			<label>
+				China-Beijing:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="China-Guangzhou">
+			<label>
+				China-Guangzhou:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Costa Rica">
+			<label>
+				Costa Rica:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Croatia">
+			<label>
+				Croatia:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Cyprus">
+			<label>
+				Cyprus:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Czech Republic">
+			<label>
+				Czech Republic:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Denmark">
+			<label>
+				Denmark:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Dominican Republic">
+			<label>
+				Dominican Republic:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="El Salvador">
+			<label>
+				El Salvador:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Estonia">
+			<label>
+				Estonia:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Finland">
+			<label>
+				Finland:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="France">
+			<label>
+				France:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Germany">
+			<label>
+				Germany:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Greece">
+			<label>
+				Greece:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Hong Kong">
+			<label>
+				Hong Kong:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Hungary">
+			<label>
+				Hungary:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="India-Bangalore">
+			<label>
+				India-Bangalore:
+				<input type="number" data-price="0.05" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="India-Mumbai">
+			<label>
+				India-Mumbai:
+				<input type="number" data-price="0.05" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Indonesia">
+			<label>
+				Indonesia:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Ireland">
+			<label>
+				Ireland:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Israel">
+			<label>
+				Israel:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Italy">
+			<label>
+				Italy:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Japan">
+			<label>
+				Japan:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Korea, Republic of">
+			<label>
+				Korea, Republic of:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Latvia">
+			<label>
+				Latvia:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Liechtenstein">
+			<label>
+				Liechtenstein:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Lithuania">
+			<label>
+				Lithuania:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Luxembourg">
+			<label>
+				Luxembourg:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Malaysia">
+			<label>
+				Malaysia:
+				<input type="number" data-price="0.03" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Malta">
+			<label>
+				Malta:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Mexica-Guadalajara">
+			<label>
+				Mexica-Guadalajara:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Mexico-Mexico City">
+			<label>
+				Mexico-Mexico City:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Netherlands">
+			<label>
+				Netherlands:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="New Zealand">
+			<label>
+				New Zealand:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Norway">
+			<label>
+				Norway:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Peru">
+			<label>
+				Peru:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Philippines">
+			<label>
+				Philippines:
+				<input type="number" data-price="0.25" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Poland">
+			<label>
+				Poland:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Portugal">
+			<label>
+				Portugal:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Puerto Rico">
+			<label>
+				Puerto Rico:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Romania">
+			<label>
+				Romania:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Russia-Moscow">
+			<label>
+				Russia-Moscow:
+				<input type="number" data-price="0.07" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Singapore">
+			<label>
+				Singapore:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Slovakia">
+			<label>
+				Slovakia:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Slovenia">
+			<label>
+				Slovenia:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="South Africa">
+			<label>
+				South Africa:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Spain">
+			<label>
+				Spain:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Sweden">
+			<label>
+				Sweden:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Switzerland">
+			<label>
+				Switzerland:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="Taiwan">
+			<label>
+				Taiwan:
+				<input type="number" data-price="0.01" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="United Kingdom">
+			<label>
+				United Kingdom:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+		<div class="minute-box" data-country="United States Toll-Free">
+			<label>
+				United States Toll-Free:
+				<input type="number" data-price="0.02" value="0" />
+			</label>
+			<span class="hide-minute-box">x</span>
+		</div>
+	</form>
+	<p>
+		Total Cost for Biba Per Month: <div id="output"></div>
+	</p>
+</body>
+</html>
